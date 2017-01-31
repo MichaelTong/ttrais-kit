@@ -5,9 +5,10 @@ VAL=$2
 WORKLOAD=$3
 TRACE=$4
 INTERFACE=$5
-RESIZE=$6
-RERATE=$7
-
+RRESIZE=$6
+WRESIZE=$7
+RRERATE=$8
+WRERATE=$9
 
 if [[ $INTERFACE == "nvme" ]]; then
     VSSIM=$VSSIM_RUN_DIR_NVME/
@@ -39,8 +40,10 @@ function controlVM() {
     outputdir=$4
     outputlog=$5
     workload=$6
-    resize=$7
-    rerate=$8
+    rresize=$7
+    wresize=$8
+    rrerate=$9
+    wrerate=$10
 
     ssh -T -p 8888 huaicheng@localhost\
         trace=$trace \
@@ -49,15 +52,19 @@ function controlVM() {
         outputdir=$outputdir \
         outputlog=$outputlog \
         workload=$workload \
-        resize=$resize \
-        rerate=$rerate \
+        rresize=$rresize \
+        wresize=$wresize \
+        rrerate=$rrerate \
+        wrerate=$wrerate \
     '/bin/bash -s' << "ENDSSH"
 
 function edit_trace() {
     workload=$1
-    resize=$2
-    rerate=$3
-    newtrace=$workload-resize-$resize-rerate-$rerate
+    rresize=$2
+    wresize=$3
+    rrerate=$4
+    wrerate=$5
+    newtrace=$workload-rresize-$rresize-wresize-$wresize-rrerate-$rrerate-wrerate-$wrerate
     if [[ ! -e ~/trace-edit/in/$workload ]]; then
         echo "cannot find trace $workload"
         exit -1
@@ -65,8 +72,8 @@ function edit_trace() {
     if [[ ! -e ~/trace-edit/out/$newtrace ]]; then
         echo "Creating trace $newtrace"
         cd ~/trace-edit/
-        python trace-editor.py -file $workload -resize $resize -rerate $rerate
-        mv out/$workload-modified.trace out/$workload-resize-$resize-rerate-$rerate
+        python trace-editor.py -file $workload -rresize $rresize -wresize $wresize -rrerate $rrerate -wrerate $wrerate
+        mv out/$workload-modified.trace out/$newtrace
     else
         echo "Trace $newtrace exists"
     fi
@@ -95,7 +102,7 @@ sleep 1
 
 echo "Creating running trace"
 echo ""
-edit_trace $workload $resize $rerate
+edit_trace $workload $rresize $wresize $rrerate $wrerate
 cp ~/trace-edit/out/$trace ~/replayer/
 sleep 1
 
@@ -157,17 +164,17 @@ do
         else
           break
         fi
-    done 
+    done
     outputdir=$SN-$ALTER-$VAL
     outputlog=$WORKLOAD-$policy-$SN
-    controlVM $TRACE $policy_num $INTERFACE $outputdir $outputlog $WORKLOAD $RESIZE $RERATE
+    controlVM $TRACE $policy_num $INTERFACE $outputdir $outputlog $WORKLOAD $RRESIZE $WRESIZE $RRERATE $WRERATE
     echo ""
     echo "waiting for VM to stop"
     echo ""
     sleep 15
     echo "post process stats"
     postVM $WORKLOAD $policy $SN
-    echo "************************************************************************" 
+    echo "************************************************************************"
 done
 
 echo "========================================================================"

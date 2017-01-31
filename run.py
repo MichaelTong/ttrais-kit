@@ -14,7 +14,7 @@ os.environ["REPLAYER_DIR"] = "/home/michaelht/replayer"
 os.environ["RTK_DIR"] = "/home/michaelht/share/ttrais/rtk"
 
 SCRIPT_SET_DIR = "scripts-set"
-SCRIPT_HANDLE = ["0-blocking", "1-warmup", "7-numchann"]
+SCRIPT_HANDLE = ["0-blocking", "1-warmup", "6-numchann"]
 def prepare_configs(conf_fp):
     """
     This function
@@ -69,21 +69,24 @@ def prepare_run(conf):
     rerate = conf["5-rerate"]
     #script = SCRIPT_SET_DIR + "/edittrace.sh {} {} {}".format(trace, resize, rerate)
    # os.system(script)
-    conf["#trace"] = "{}-resize-{}-rerate-{}".format(trace, resize, rerate)
+    conf["#trace"] = "{}-rresize-{}-wresize-{}-rrerate-{}-wrerate-{}".format(trace, resize[1], resize[0], rerate[1], rerate[0])
 
 def run(cfg):
     """
     This function
     """
     alter = cfg["#alter"]
-    val = cfg[alter]
+    val = "".join(str(cfg[alter]).split())
     workload = cfg["2-workload"]
     trace = cfg["#trace"]
     interface = cfg["3-interface"]
-    resize = cfg["4-resize"]
-    rerate = cfg["5-rerate"]
+    rresize = cfg["4-resize"][1]
+    wresize = cfg["4-resize"][0]
+    rrerate = cfg["5-rerate"][1]
+    wrerate = cfg["5-rerate"][0]
     os.system("./run-vm.sh {} {} {} {} {} {} {}".format(alter, val, workload, trace,
-                                                        interface, resize, rerate))
+                                                        interface,
+                                                        rresize, wresize, rrerate, wrerate))
 
 def proceed_config(conf):
     """

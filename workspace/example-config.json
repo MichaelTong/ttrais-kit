@@ -1,10 +1,11 @@
 {
-    "#comment":"For each option, first one is the default when altering other options",
-    "0-blocking": ["channel", "chip", "whole"],
-    "1-warmup": ["s1", "s2", "s3"],
-    "2-workload": ["TPCC", "DTRS"],
-    "3-interface": ["nvme", "virtio"],
-    "4-resize": ["1", "2", "4"],
-    "5-rerate": ["1", "0.5", "2"],
-    "7-numchann": ["8", "4", "16"]
+  "#comment1":"For each option, first one is the default when altering other options",
+  "0-blocking": ["channel", "chip", "whole"],
+  "1-warmup": ["s1", "s2", "s3"],
+  "2-workload": ["TPCC", "DTRS"],
+  "3-interface": ["nvme", "virtio"],
+  "4-resize": [[1, 2],[2, 2.5]],
+  "5-rerate": [[1, 1], [2,4]],
+  "#comment2" : "0 is write, 1 is read",
+  "6-numchann": ["8", "4", "16"]
 }
