@@ -16,6 +16,27 @@ else
     VSSIM=$VSSIM_RUN_DIR_VIRTIO/
 fi
 
+function prepareTrace() {
+    workload=$1
+    rresize=$2
+    wresize=$3
+    rrerate=$4
+    wrerate=$5
+    newtrace=$workload-wresize-$wresize-rresize-$rresize-wrerate-$wrerate-rrerate-$rrerate
+    echo "prepare trace"
+    if [[ ! -e ~/share/trace-edit/in/$workload ]]; then
+        echo "cannot find trace $workload"
+        exit -1
+    fi
+    if [[ ! -e ~/share/trace-edit/out/$newtrace ]]; then
+        echo "Creating trace $newtrace"
+        cd ~/share/trace-edit/
+        python trace-editor.py -file $workload -rresize $rresize -wresize $wresize -rrerate $rrerate -wrerate $wrerate
+        mv out/$workload-modified.trace out/$newtrace
+    else
+        echo "Trace $newtrace exists"
+    fi
+}
 
 function startVM() {
     interface=$1
@@ -102,8 +123,8 @@ sleep 1
 
 echo "Creating running trace"
 echo ""
-edit_trace $workload $rresize $wresize $rrerate $wrerate
-cp ~/trace-edit/out/$trace ~/replayer/
+#edit_trace $workload $rresize $wresize $rrerate $wrerate
+cp ~/share/trace-edit/out/$trace ~/replayer/
 sleep 1
 
 echo "Running trace $trace"
@@ -153,6 +174,7 @@ do
     echo "************************************************************************"
     echo "ALTER $ALTER | VAL $VAL | WORKLOAD $WORKLOAD | INTERFACE $INTERFACE"
     echo "POLICY $policy"
+    prepareTrace $WORKLOAD $RRESIZE $WRESIZE $RRERATE $WRERATE
     startVM $INTERFACE &
     echo ""
     echo "waiting for VM to start"

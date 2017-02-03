@@ -4,8 +4,7 @@
   "1-warmup": ["s1", "s2", "s3"],
   "2-workload": ["TPCC", "DTRS"],
   "3-interface": ["nvme", "virtio"],
-  "4-resize": [[1, 2],[2, 2.5]],
-  "5-rerate": [[1, 1], [2,4]],
-  "#comment2" : "0 is write, 1 is read",
-  "6-numchann": ["8", "4", "16"]
+  "4-modify": [[1, 2, 1, 1]],
+  "#comment2" : "modify is resize/rerate, 0/1 is resize write/read, 2/3 is rerate write/read",
+  "5-numchann": ["8", "4", "16"]
 }
